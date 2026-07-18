@@ -130,7 +130,7 @@ export default function OnboardingPage() {
             <AddressAutocomplete
               value={address}
               country={country}
-              placeholder="Where everyone is heading, e.g. Landmark Event Center"
+              placeholder="e.g. Landmark Event Center"
               onChange={(text, locality) => {
                 setAddress(text)
                 // Prefill the area from the picked place unless the owner typed one.
