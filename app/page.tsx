@@ -11,7 +11,7 @@ import {
 /*
  * Layout borrowed from the TokenScope telemetry reference: a full-bleed sheet
  * of panels separated by hairline rules (no floating cards), mono micro-labels,
- * `§ 0n` section strips, oversized numerals, a roman-numeral ranked list and
+ * section strips, oversized numerals, a ranked areas list and
  * status dots. Rendered in Veesaa's own palette: white paper, near-black ink,
  * gray rules, blue accent.
  */
@@ -25,46 +25,38 @@ const STATUS_DOT: Record<string, { glyph: string; label: string; cls: string }> 
   suspended: { glyph: '○', label: 'SUSPENDED', cls: 'text-gray-400' },
 }
 
-/** `§ 0n` section strip. */
-function SectionStrip({ n, title, right }: { n: string; title: string; right?: React.ReactNode }) {
+/** Section strip. */
+function SectionStrip({ title, right }: { title: string; right?: React.ReactNode }) {
   return (
     <div className={`flex items-center justify-between border-b ${RULE} px-7 py-3`}>
-      <p className="font-mono text-[10px] font-semibold tracking-[0.18em] text-gray-900">
-        <span className="text-blue-600">§ {n}</span>
-        <span className="ml-3 uppercase">{title}</span>
-      </p>
+      <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.025em] text-gray-900">{title}</p>
       {right}
     </div>
   )
 }
 
 function MicroLabel({ children, className = 'text-gray-400' }: { children: React.ReactNode; className?: string }) {
-  return <p className={`font-mono text-[10px] font-semibold uppercase tracking-[0.18em] ${className}`}>{children}</p>
+  return <p className={`font-mono text-[10px] font-semibold uppercase tracking-[0.10em] ${className}`}>{children}</p>
 }
 
 /** Squared mono action, the reference has no rounded corners. */
-const BTN = 'font-mono text-[11px] font-semibold uppercase tracking-[0.14em] px-4 py-2.5 transition-colors'
+const BTN = 'font-mono text-[11px] font-semibold uppercase tracking-[0.10em] px-4 py-2.5 transition-colors'
 const BTN_DARK = `${BTN} bg-gray-900 text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed`
 const BTN_GHOST = `${BTN} border ${RULE} text-gray-900 hover:bg-gray-50`
 
-function BandCell({ n, label, value, accent, last }: {
-  n: string; label: string; value: string | number; accent?: boolean; last?: boolean
+function BandCell({ label, value, accent, last }: {
+  label: string; value: string | number; accent?: boolean; last?: boolean
 }) {
   const zero = value === 0 || value === '0' || value === '0 km'
   return (
     <div className={`border-b ${RULE} p-7 lg:border-b-0 ${last ? '' : 'lg:border-r'}`}>
-      <div className="flex items-baseline justify-between">
-        <MicroLabel>{label}</MicroLabel>
-        <span className="font-mono text-[10px] text-gray-300">№ {n}</span>
-      </div>
+      <MicroLabel>{label}</MicroLabel>
       <p className={`mt-3 font-mono text-4xl font-bold tracking-tight ${zero ? 'text-gray-300' : accent ? 'text-red-600' : 'text-gray-900'}`}>
         {value}
       </p>
     </div>
   )
 }
-
-const ROMAN = ['I.', 'II.', 'III.', 'IV.']
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -152,7 +144,7 @@ export default function DashboardPage() {
   if (loading || !community) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
-        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Loading…</p>
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.10em] text-gray-400">Loading…</p>
       </main>
     )
   }
@@ -173,11 +165,11 @@ export default function DashboardPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/veesaa-logo-black.svg" alt="Veesaa" className="h-[16px] w-auto" />
           <div className="flex items-center gap-6">
-            <span className="hidden font-mono text-[10px] font-semibold tracking-[0.18em] text-gray-400 sm:block">{today}</span>
-            <span className={`font-mono text-[10px] font-semibold tracking-[0.18em] ${dot.cls}`}>
+            <span className="hidden font-mono text-[10px] font-semibold tracking-[0.10em] text-gray-400 sm:block">{today}</span>
+            <span className={`font-mono text-[10px] font-semibold tracking-[0.10em] ${dot.cls}`}>
               {dot.glyph} {dot.label}
             </span>
-            <button onClick={signOut} className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 transition-colors hover:text-gray-900">
+            <button onClick={signOut} className="font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400 transition-colors hover:text-gray-900">
               Sign out
             </button>
           </div>
@@ -206,14 +198,12 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ── § 01 · Community ── */}
-        <SectionStrip
-          n="01"
-          title="Community"
+        {/* ── Community ── */}
+        <SectionStrip title="Community"
           right={
             <button
               onClick={() => { setEditing(e => !e); setActionError('') }}
-              className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 transition-colors hover:text-gray-900"
+              className="font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400 transition-colors hover:text-gray-900"
             >
               {editing ? 'Close' : 'Edit details'}
             </button>
@@ -275,7 +265,7 @@ export default function DashboardPage() {
               <MicroLabel>Community code</MicroLabel>
               <button
                 onClick={() => { setChangingCode(c => !c); setActionError(''); setConfirmCode(false) }}
-                className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400 transition-colors hover:text-gray-900"
+                className="font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400 transition-colors hover:text-gray-900"
               >
                 {changingCode ? 'Cancel' : 'Change'}
               </button>
@@ -320,14 +310,14 @@ export default function DashboardPage() {
 
         {live ? (
           <>
-            {/* ── § 02 · Last 30 days ── */}
-            <SectionStrip n="02" title="Last 30 days"
-              right={<span className="font-mono text-[10px] font-semibold tracking-[0.18em] text-gray-400">{rangeLabel}</span>} />
+            {/* ── Last 30 days ── */}
+            <SectionStrip title="Last 30 days"
+              right={<span className="font-mono text-[10px] font-semibold tracking-[0.10em] text-gray-400">{rangeLabel}</span>} />
             <section className={`grid border-b ${RULE} lg:grid-cols-4`}>
-              <BandCell n="I" label="Members" value={stats?.members_active ?? 0} />
-              <BandCell n="II" label="New members" value={stats?.members_new_30d ?? 0} />
-              <BandCell n="III" label="Ride searches" value={stats?.searches_30d ?? 0} />
-              <BandCell n="IV" label="Unmet searches" value={stats?.unmet_30d ?? 0} accent={(stats?.unmet_30d ?? 0) > 0} last />
+              <BandCell label="Members" value={stats?.members_active ?? 0} />
+              <BandCell label="New members" value={stats?.members_new_30d ?? 0} />
+              <BandCell label="Ride searches" value={stats?.searches_30d ?? 0} />
+              <BandCell label="Unmet searches" value={stats?.unmet_30d ?? 0} accent={(stats?.unmet_30d ?? 0) > 0} last />
             </section>
             {(stats?.unmet_30d ?? 0) > 0 && (
               <div className={`flex items-start gap-3 border-b ${RULE} bg-red-50/50 px-7 py-4`}>
@@ -342,27 +332,27 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* ── § 03 · All time ── */}
-            <SectionStrip n="03" title="All time" />
+            {/* ── All time ── */}
+            <SectionStrip title="All time" />
             <section className={`grid border-b ${RULE} lg:grid-cols-3`}>
-              <BandCell n="I" label="Open trips" value={stats?.trips_open ?? 0} />
-              <BandCell n="II" label="Completed trips" value={stats?.trips_completed ?? 0} />
-              <BandCell n="III" label="Kilometres shared" value={`${Math.round(stats?.km_shared ?? 0).toLocaleString()} km`} last />
+              <BandCell label="Open trips" value={stats?.trips_open ?? 0} />
+              <BandCell label="Completed trips" value={stats?.trips_completed ?? 0} />
+              <BandCell label="Kilometres shared" value={`${Math.round(stats?.km_shared ?? 0).toLocaleString()} km`} last />
             </section>
 
-            {/* ── § 04 · Where members come from ── */}
-            <SectionStrip n="04" title="Where members come from"
-              right={<span className="font-mono text-[10px] font-semibold tracking-[0.18em] text-gray-400">{areas.length > 0 ? `${areas.length} AREA${areas.length === 1 ? '' : 'S'}` : 'AWAITING DATA'}</span>} />
+            {/* ── Where members come from ── */}
+            <SectionStrip title="Where members come from"
+              right={<span className="font-mono text-[10px] font-semibold tracking-[0.10em] text-gray-400">{areas.length > 0 ? `${areas.length} AREA${areas.length === 1 ? '' : 'S'}` : 'AWAITING DATA'}</span>} />
             <section className={`border-b ${RULE}`}>
               {areas.length > 0 ? (
                 areas.map((a, i) => {
                   const pct = Math.round((a.member_count / maxAreaCount) * 100)
                   return (
                     <div key={a.area} className={`flex items-center gap-6 px-7 py-5 ${i < areas.length - 1 ? `border-b ${RULE}` : ''}`}>
-                      <span className="w-8 shrink-0 font-mono text-sm font-semibold text-gray-300">{ROMAN[i]}</span>
+                      <span className="w-8 shrink-0 font-mono text-sm font-semibold text-gray-300">{i + 1}.</span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-base font-bold tracking-tight">{a.area}</p>
-                        <p className="mt-0.5 font-mono text-[10px] font-semibold tracking-[0.14em] text-gray-400">
+                        <p className="mt-0.5 font-mono text-[10px] font-semibold tracking-[0.10em] text-gray-400">
                           {pct}% OF TOP AREA
                         </p>
                       </div>
@@ -375,7 +365,7 @@ export default function DashboardPage() {
                 })
               ) : (
                 <div className="px-7 py-14 text-center">
-                  <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-300">Awaiting data</p>
+                  <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.10em] text-gray-300">Awaiting data</p>
                   <p className="mx-auto mt-3 max-w-[300px] text-sm leading-relaxed text-gray-500">
                     Appears once at least <span className="font-semibold text-gray-900">3 members from the
                     same area</span> have offered or searched for rides.
@@ -386,9 +376,9 @@ export default function DashboardPage() {
           </>
         ) : (
           <>
-            <SectionStrip n="02" title="Stats" />
+            <SectionStrip title="Stats" />
             <div className={`border-b ${RULE} px-7 py-16 text-center`}>
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-300">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.10em] text-gray-300">
                 Stats appear once your community is live
               </p>
             </div>
@@ -397,10 +387,10 @@ export default function DashboardPage() {
 
         {/* ── Footer ── */}
         <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 px-7 py-5">
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400">
             © {new Date().getFullYear()} VZA Technologies Limited
           </p>
-          <div className="flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+          <div className="flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400">
             <a href="https://veesaa.co/privacy" className="transition-colors hover:text-gray-900">Privacy Policy</a>
             <span>·</span>
             <a href="https://veesaa.co/terms-of-use" className="transition-colors hover:text-gray-900">Terms of Use</a>
