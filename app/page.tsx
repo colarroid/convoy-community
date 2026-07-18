@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useRef } from 'react'
 import {
-  getMyCommunity, getStats, getTopAreas, updateCommunity, changeCode,
+  getMyCommunity, getStats, getTopAreas, updateCommunity, changeCode, uploadLogo,
   type OwnedCommunity, type CommunityStats, type TopArea,
 } from '@/lib/community'
 
@@ -43,6 +44,10 @@ export default function DashboardPage() {
   const [actionError, setActionError] = useState('')
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
+  // Logo upload
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [logoBusy, setLogoBusy] = useState(false)
+  const [logoError, setLogoError] = useState('')
 
   useEffect(() => {
     ;(async () => {
@@ -81,6 +86,21 @@ export default function DashboardPage() {
       setCommunity(c); setChangingCode(false); setNewCode(''); setConfirmCode(false)
     } catch (e) { setActionError(e instanceof Error ? e.message : 'Could not change the code.') }
     setBusy(false)
+  }
+
+  const onLogoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = '' // allow re-picking the same file
+    if (!file) return
+    setLogoBusy(true)
+    setLogoError('')
+    try {
+      const c = await uploadLogo(file)
+      setCommunity(c)
+    } catch (err) {
+      setLogoError(err instanceof Error ? err.message : 'Logo upload failed.')
+    }
+    setLogoBusy(false)
   }
 
   const copyCode = async () => {
@@ -130,13 +150,36 @@ export default function DashboardPage() {
         {/* ── Community card ── */}
         <div className="card mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2.5">
-                <h1 className="text-xl font-semibold tracking-tight truncate">{community.name}</h1>
-                <span className={`chip capitalize ${STATUS_CHIP[community.status]}`}>{community.status}</span>
+            <div className="flex items-start gap-4 min-w-0">
+              {/* Logo: click to upload/replace */}
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={logoBusy}
+                title={community.logo_url ? 'Change logo' : 'Upload logo'}
+                className="group relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-border bg-subtle flex items-center justify-center"
+              >
+                {community.logo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={community.logo_url} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <span className="text-lg font-semibold text-secondary">{community.name[0]?.toUpperCase()}</span>
+                )}
+                <span className="absolute inset-0 hidden items-center justify-center bg-black/45 text-[10px] font-semibold text-white group-hover:flex">
+                  {logoBusy ? '…' : community.logo_url ? 'Change' : 'Upload'}
+                </span>
+              </button>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onLogoFile} />
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-2.5">
+                  <h1 className="text-xl font-semibold tracking-tight truncate">{community.name}</h1>
+                  <span className={`chip capitalize ${STATUS_CHIP[community.status]}`}>{community.status}</span>
+                </div>
+                {community.address && <p className="text-sm text-secondary mt-1">{community.address}</p>}
+                {community.area && <p className="text-sm text-secondary">{community.area}</p>}
+                {logoError && <p className="text-xs text-red-500 mt-1">{logoError}</p>}
               </div>
-              {community.address && <p className="text-sm text-secondary mt-1">{community.address}</p>}
-              {community.area && <p className="text-sm text-secondary">{community.area}</p>}
             </div>
             <button onClick={() => { setEditing(e => !e); setActionError('') }} className="btn-secondary">
               {editing ? 'Close' : 'Edit details'}

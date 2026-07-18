@@ -76,6 +76,43 @@ export async function changeCode(code: string): Promise<OwnedCommunity> {
   return unwrap(data as OwnedCommunity, error)
 }
 
+/** Upload a logo via the server-signed route, then record the URL on the community. */
+export async function uploadLogo(file: File): Promise<OwnedCommunity> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+  if (!token) throw new Error('Please sign in again.')
+
+  const signRes = await fetch('/api/cloudinary/sign', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!signRes.ok) {
+    let detail = ''
+    try { detail = (await signRes.json())?.error ?? '' } catch { /* ignore */ }
+    throw new Error(detail || 'Could not prepare the upload.')
+  }
+  const { cloudName, apiKey, timestamp, signature, folder } = await signRes.json()
+
+  const form = new FormData()
+  form.append('file', file)
+  form.append('api_key', apiKey)
+  form.append('timestamp', String(timestamp))
+  form.append('signature', signature)
+  form.append('folder', folder)
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: form,
+  })
+  const json = await res.json()
+  if (!res.ok || !json.secure_url) {
+    throw new Error(json?.error?.message ?? 'Logo upload failed.')
+  }
+
+  const { data, error } = await supabase.rpc('set_my_community_logo', { p_url: json.secure_url })
+  return unwrap(data as OwnedCommunity, error)
+}
+
 export async function getStats(): Promise<CommunityStats | null> {
   const { data, error } = await supabase.rpc('get_my_community_stats')
   if (error) return null
