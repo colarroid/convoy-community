@@ -146,7 +146,7 @@ export default function DashboardPage() {
           {editing && (
             <div className="mt-5 border-t border-border pt-5 flex flex-col gap-3">
               <input value={name} onChange={e => setName(e.target.value)} placeholder="Community name" className="field" />
-              <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Destination address" className="field" />
+              <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Community address" className="field" />
               <input value={area} onChange={e => setArea(e.target.value)} placeholder="Area" className="field" />
               {community.status === 'rejected' && (
                 <p className="text-xs text-secondary">Saving resubmits your community for review.</p>

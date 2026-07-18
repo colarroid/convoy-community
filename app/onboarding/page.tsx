@@ -119,13 +119,13 @@ export default function OnboardingPage() {
             )}
 
             <p className="mt-3 rounded-xl bg-subtle px-3.5 py-3 text-xs text-secondary leading-relaxed">
-              Members enter this exact code to access your community, and it identifies your shared
-              destination. You can change it later, but members lose access until you share the new one.
+              Members enter this exact code to access your community. You can change it later, but
+              members lose access until you share the new one.
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">Destination address</label>
+            <label className="block text-sm font-medium mb-1.5">Community address</label>
             <input value={address} onChange={e => setAddress(e.target.value)} required
               placeholder="Where everyone is heading, e.g. 8/9 Commercial Ave, Yaba" className="field" />
           </div>
