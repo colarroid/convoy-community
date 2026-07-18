@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { createCommunity, getMyCommunity, isCodeAvailable } from '@/lib/community'
 import { suggestCodes } from '@/lib/codeSuggest'
+import AddressAutocomplete from '@/components/AddressAutocomplete'
 
 const CODE_RE = /^[A-Z0-9][A-Z0-9-]{2,14}[A-Z0-9]$/
 
@@ -126,8 +127,16 @@ export default function OnboardingPage() {
 
           <div>
             <label className="block text-sm font-medium mb-1.5">Community address</label>
-            <input value={address} onChange={e => setAddress(e.target.value)} required
-              placeholder="Where everyone is heading, e.g. 8/9 Commercial Ave, Yaba" className="field" />
+            <AddressAutocomplete
+              value={address}
+              country={country}
+              placeholder="Where everyone is heading, e.g. Landmark Event Center"
+              onChange={(text, locality) => {
+                setAddress(text)
+                // Prefill the area from the picked place unless the owner typed one.
+                if (locality) setArea(prev => prev.trim() ? prev : locality)
+              }}
+            />
           </div>
 
           <div className="flex gap-3">
@@ -147,7 +156,7 @@ export default function OnboardingPage() {
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <button disabled={busy || !codeValid || available === false} className="btn-primary">
+          <button disabled={busy || !codeValid || available === false || !address.trim()} className="btn-primary">
             {busy ? 'Submitting…' : 'Submit for review'}
           </button>
         </form>
