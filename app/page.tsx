@@ -151,25 +151,15 @@ export default function DashboardPage() {
         <div className="card mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-start gap-4 min-w-0">
-              {/* Logo: click to upload/replace */}
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                disabled={logoBusy}
-                title={community.logo_url ? 'Change logo' : 'Upload logo'}
-                className="group relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-border bg-subtle flex items-center justify-center"
-              >
+              {/* Logo (upload lives in Edit details) */}
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-border bg-subtle flex items-center justify-center">
                 {community.logo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={community.logo_url} alt="" className="h-full w-full object-cover" />
                 ) : (
                   <span className="text-lg font-semibold text-secondary">{community.name[0]?.toUpperCase()}</span>
                 )}
-                <span className="absolute inset-0 hidden items-center justify-center bg-black/45 text-[10px] font-semibold text-white group-hover:flex">
-                  {logoBusy ? '…' : community.logo_url ? 'Change' : 'Upload'}
-                </span>
-              </button>
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onLogoFile} />
+              </div>
 
               <div className="min-w-0">
                 <div className="flex items-center gap-2.5">
@@ -178,7 +168,6 @@ export default function DashboardPage() {
                 </div>
                 {community.address && <p className="text-sm text-secondary mt-1">{community.address}</p>}
                 {community.area && <p className="text-sm text-secondary">{community.area}</p>}
-                {logoError && <p className="text-xs text-red-500 mt-1">{logoError}</p>}
               </div>
             </div>
             <button onClick={() => { setEditing(e => !e); setActionError('') }} className="btn-secondary">
@@ -188,6 +177,26 @@ export default function DashboardPage() {
 
           {editing && (
             <div className="mt-5 border-t border-border pt-5 flex flex-col gap-3">
+              {/* Logo */}
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-border bg-subtle flex items-center justify-center">
+                  {community.logo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={community.logo_url} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-lg font-semibold text-secondary">{community.name[0]?.toUpperCase()}</span>
+                  )}
+                </div>
+                <div>
+                  <button type="button" onClick={() => fileRef.current?.click()} disabled={logoBusy} className="btn-secondary h-10">
+                    {logoBusy ? 'Uploading…' : community.logo_url ? 'Change logo' : 'Upload logo'}
+                  </button>
+                  <p className="mt-1.5 text-xs text-secondary">Square image recommended. Shown wherever members see your community.</p>
+                  {logoError && <p className="mt-1 text-xs text-red-500">{logoError}</p>}
+                </div>
+                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onLogoFile} />
+              </div>
+
               <input value={name} onChange={e => setName(e.target.value)} placeholder="Community name" className="field" />
               <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Community address" className="field" />
               <input value={area} onChange={e => setArea(e.target.value)} placeholder="Area" className="field" />
