@@ -47,11 +47,10 @@ const BTN_GHOST = `${BTN} border ${RULE} text-gray-900 hover:bg-gray-50`
 function BandCell({ label, value, accent, last }: {
   label: string; value: string | number; accent?: boolean; last?: boolean
 }) {
-  const zero = value === 0 || value === '0' || value === '0 km'
   return (
     <div className={`border-b ${RULE} p-7 lg:border-b-0 ${last ? '' : 'lg:border-r'}`}>
       <MicroLabel>{label}</MicroLabel>
-      <p className={`mt-3 font-mono text-4xl font-bold tracking-tight ${zero ? 'text-gray-300' : accent ? 'text-red-600' : 'text-gray-900'}`}>
+      <p className={`mt-3 font-mono text-4xl font-bold tracking-tight ${accent ? 'text-red-600' : 'text-gray-900'}`}>
         {value}
       </p>
     </div>
@@ -387,10 +386,8 @@ export default function DashboardPage() {
 
         {/* ── Footer ── */}
         <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 px-7 py-5">
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400">
-            © {new Date().getFullYear()} VZA Technologies Limited
-          </p>
-          <div className="flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400">
+          <p className="text-sm text-gray-400">© {new Date().getFullYear()} VZA Technologies Limited</p>
+          <div className="flex items-center gap-2 text-sm text-gray-400">
             <a href="https://veesaa.co/privacy" className="transition-colors hover:text-gray-900">Privacy Policy</a>
             <span>·</span>
             <a href="https://veesaa.co/terms-of-use" className="transition-colors hover:text-gray-900">Terms of Use</a>
