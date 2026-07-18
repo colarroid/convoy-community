@@ -15,16 +15,29 @@ const STATUS_CHIP: Record<string, string> = {
   suspended: 'bg-subtle text-secondary',
 }
 
-/** Quiet uppercase section label. */
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-secondary">{children}</p>
-}
-
-function Stat({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
+function Stat({ label, value, caption, help, accent }: {
+  label: string
+  value: number
+  caption: string
+  help: string
+  accent?: boolean
+}) {
+  const zero = value === 0
   return (
-    <div className="rounded-2xl bg-surface ring-1 ring-black/5 p-5">
-      <p className={`text-3xl font-bold tracking-tight ${accent ? 'text-red-600' : 'text-primary'}`}>{value}</p>
-      <p className="mt-1 text-xs text-secondary leading-snug">{label}</p>
+    <div className="rounded-2xl bg-surface p-5 ring-1 ring-black/[0.04] shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm text-secondary leading-snug">{label}</p>
+        <span
+          title={help}
+          className="flex h-5 w-5 shrink-0 cursor-help items-center justify-center rounded-full border border-border text-[11px] font-semibold text-secondary/70"
+        >
+          ?
+        </span>
+      </div>
+      <p className={`mt-2 text-4xl font-bold tracking-tight ${zero ? 'text-gray-300' : accent ? 'text-red-600' : 'text-primary'}`}>
+        {value}
+      </p>
+      <p className="mt-2 text-sm text-gray-400 leading-snug">{caption}</p>
     </div>
   )
 }
@@ -118,6 +131,8 @@ export default function DashboardPage() {
 
   const live = community.status === 'active'
   const maxAreaCount = Math.max(1, ...areas.map(a => a.member_count))
+  const fmtDay = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+  const rangeLabel = `${fmtDay(new Date(Date.now() - 30 * 86400000))} - ${fmtDay(new Date())}`
 
   return (
     <main className="min-h-screen pb-20">
@@ -279,12 +294,36 @@ export default function DashboardPage() {
         {live ? (
           <>
             <div className="mt-12">
-              <SectionLabel>Last 30 days</SectionLabel>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <Stat label="Members with your code" value={stats?.members_active ?? 0} />
-                <Stat label="New members" value={stats?.members_new_30d ?? 0} />
-                <Stat label="Ride searches" value={stats?.searches_30d ?? 0} />
-                <Stat label="Searches that found nothing" value={stats?.unmet_30d ?? 0} accent={(stats?.unmet_30d ?? 0) > 0} />
+              <div className="mb-4 flex items-baseline justify-between gap-4">
+                <h2 className="text-lg font-bold tracking-tight text-primary">Last 30 days</h2>
+                <p className="text-sm text-secondary">{rangeLabel}</p>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <Stat
+                  label="Members with your code"
+                  value={stats?.members_active ?? 0}
+                  caption="Share the code to grow this"
+                  help="People who have entered your community code."
+                />
+                <Stat
+                  label="New members"
+                  value={stats?.members_new_30d ?? 0}
+                  caption="Joined in the last 30 days"
+                  help="First-time joins in the last 30 days."
+                />
+                <Stat
+                  label="Ride searches"
+                  value={stats?.searches_30d ?? 0}
+                  caption="Demand inside your community"
+                  help="Times members searched for a ride in your community."
+                />
+                <Stat
+                  label="Searches that found nothing"
+                  value={stats?.unmet_30d ?? 0}
+                  caption="Unmet demand, worth watching"
+                  help="Searches that returned no rides. Encourage members with cars to offer their routes."
+                  accent={(stats?.unmet_30d ?? 0) > 0}
+                />
               </div>
 
               {(stats?.unmet_30d ?? 0) > 0 && (
@@ -301,47 +340,70 @@ export default function DashboardPage() {
               )}
             </div>
 
-            <div className="mt-10 grid gap-8 sm:grid-cols-2">
-              <div>
-                <SectionLabel>All time</SectionLabel>
-                <div className="rounded-2xl bg-surface p-5 ring-1 ring-black/5">
-                  <dl className="grid grid-cols-[1fr_auto] gap-y-3 text-sm">
-                    <dt className="text-secondary">Open trips</dt>
-                    <dd className="font-bold tracking-tight text-primary">{stats?.trips_open ?? 0}</dd>
-                    <dt className="text-secondary">Completed trips</dt>
-                    <dd className="font-bold tracking-tight text-primary">{stats?.trips_completed ?? 0}</dd>
-                    <dt className="text-secondary">Kilometres shared</dt>
-                    <dd className="font-bold tracking-tight text-primary">{Math.round(stats?.km_shared ?? 0).toLocaleString()} km</dd>
-                  </dl>
-                </div>
+            <div className="mt-8 grid items-stretch gap-6 sm:grid-cols-2">
+              {/* All time */}
+              <div className="rounded-2xl bg-surface p-6 ring-1 ring-black/[0.04] shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+                <h3 className="text-lg font-bold tracking-tight text-primary">All time</h3>
+                <dl className="mt-2 divide-y divide-gray-100">
+                  <div className="flex items-center gap-3 py-3.5">
+                    <svg className="h-4 w-4 shrink-0 text-blue-600" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                    <dt className="flex-1 text-sm text-secondary">Open trips</dt>
+                    <dd className="text-sm font-bold tracking-tight text-primary">{stats?.trips_open ?? 0}</dd>
+                  </div>
+                  <div className="flex items-center gap-3 py-3.5">
+                    <svg className="h-4 w-4 shrink-0 text-green-600" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                    <dt className="flex-1 text-sm text-secondary">Completed trips</dt>
+                    <dd className="text-sm font-bold tracking-tight text-primary">{stats?.trips_completed ?? 0}</dd>
+                  </div>
+                  <div className="flex items-center gap-3 py-3.5">
+                    <svg className="h-4 w-4 shrink-0 text-secondary" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 01-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0116 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <dt className="flex-1 text-sm text-secondary">Kilometres shared</dt>
+                    <dd className="text-sm font-bold tracking-tight text-primary">{Math.round(stats?.km_shared ?? 0).toLocaleString()} km</dd>
+                  </div>
+                </dl>
               </div>
 
-              <div>
-                <SectionLabel>Where members come from</SectionLabel>
-                <div className="rounded-2xl bg-surface p-5 ring-1 ring-black/5">
-                  {areas.length > 0 ? (
-                    <ul className="grid gap-3.5">
-                      {areas.map((a) => (
-                        <li key={a.area}>
-                          <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-                            <span className="truncate font-medium text-primary">{a.area}</span>
-                            <span className="shrink-0 text-secondary">{a.member_count}</span>
-                          </div>
-                          <div className="h-1.5 overflow-hidden rounded-full bg-subtle">
-                            <div
-                              className="h-full rounded-full bg-primary"
-                              style={{ width: `${Math.round((a.member_count / maxAreaCount) * 100)}%` }}
-                            />
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm leading-relaxed text-secondary">
-                      Appears once at least 3 members from the same area have offered or searched for rides.
+              {/* Where members come from */}
+              <div className="rounded-2xl bg-surface p-6 ring-1 ring-black/[0.04] shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+                <h3 className="text-lg font-bold tracking-tight text-primary">Where members come from</h3>
+                {areas.length > 0 ? (
+                  <ul className="mt-5 grid gap-3.5">
+                    {areas.map((a) => (
+                      <li key={a.area}>
+                        <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
+                          <span className="truncate font-medium text-primary">{a.area}</span>
+                          <span className="shrink-0 text-secondary">{a.member_count}</span>
+                        </div>
+                        <div className="h-1.5 overflow-hidden rounded-full bg-subtle">
+                          <div
+                            className="h-full rounded-full bg-primary"
+                            style={{ width: `${Math.round((a.member_count / maxAreaCount) * 100)}%` }}
+                          />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="flex flex-col items-center py-8 text-center">
+                    <svg className="h-10 w-10 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <circle cx="18" cy="15" r="3" />
+                      <path d="M20.2 17.2L22 19" />
+                    </svg>
+                    <p className="mt-4 max-w-[260px] text-sm leading-relaxed text-secondary">
+                      Appears once at least <span className="font-semibold text-primary">3 members from the
+                      same area</span> have offered or searched for rides.
                     </p>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </>
