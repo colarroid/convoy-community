@@ -21,10 +21,15 @@ html, body {
     @apply inline-flex items-center justify-center gap-2 h-11 px-5 rounded-full bg-surface text-primary text-sm font-semibold border border-border
            hover:bg-subtle transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
   }
-  /* Signup form field style, squared (no border-radius). */
+  /* The signup/auth form field, the reference style. Leave this rounded. */
   .field {
+    @apply w-full h-11 px-3.5 rounded-xl bg-surface border border-border text-sm text-primary placeholder-secondary
+           focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary transition-all;
+  }
+  /* Same as .field but squared, for the dashboard forms. */
+  .field-square {
     @apply w-full h-11 px-3.5 bg-surface border border-border text-sm text-primary placeholder-secondary
-           focus:outline-none focus:border-primary transition-colors;
+           focus:outline-none focus:ring-2 focus:ring-primary/15 focus:border-primary transition-all;
   }
   .card {
     @apply bg-surface border border-border rounded-2xl p-5;

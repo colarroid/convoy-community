@@ -100,7 +100,7 @@ export default function AddressAutocomplete({ value, onChange, placeholder, coun
         onFocus={() => value.length >= 2 && predictions.length > 0 && setOpen(true)}
         placeholder={placeholder}
         autoComplete="off"
-        className="field"
+        className="field-square"
       />
 
       {open && predictions.length > 0 && (

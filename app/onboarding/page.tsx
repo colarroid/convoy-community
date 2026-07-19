@@ -143,11 +143,11 @@ export default function OnboardingPage() {
             <div className="flex-1">
               <label className="block text-sm font-medium mb-1.5">Area</label>
               <input value={area} onChange={e => setArea(e.target.value)}
-                placeholder="e.g. Yaba, Lagos" className="field" />
+                placeholder="e.g. Yaba, Lagos" className="field-square" />
             </div>
             <div className="w-36">
               <label className="block text-sm font-medium mb-1.5">Country</label>
-              <select value={country} onChange={e => setCountry(e.target.value)} className="field">
+              <select value={country} onChange={e => setCountry(e.target.value)} className="field-square">
                 <option value="ng">Nigeria</option>
                 <option value="ca">Canada</option>
               </select>

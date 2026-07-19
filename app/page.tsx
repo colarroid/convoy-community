@@ -239,9 +239,9 @@ export default function DashboardPage() {
                 {logoError && <p className="mt-2 text-xs text-red-500">{logoError}</p>}
 
                 <div className="mt-5 flex flex-col gap-3">
-                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Community name" className="field" />
-                  <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Community address" className="field" />
-                  <input value={area} onChange={e => setArea(e.target.value)} placeholder="Area" className="field" />
+                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Community name" className="field-square" />
+                  <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Community address" className="field-square" />
+                  <input value={area} onChange={e => setArea(e.target.value)} placeholder="Area" className="field-square" />
                   {community.status === 'rejected' && (
                     <p className="text-xs text-gray-400">Saving resubmits your community for review.</p>
                   )}
@@ -280,13 +280,13 @@ export default function DashboardPage() {
                 <p className="text-sm leading-relaxed text-red-600">
                   <span className="font-semibold">Careful:</span> when the code changes, members lose access
                   until they enter the new one. Anyone already on a trip keeps it, but nobody can browse
-                  rides with the old code. Once every 30 days.
+                  rides with the old code. You can only change the code once every 30 days.
                 </p>
                 <input
                   value={newCode}
                   onChange={e => setNewCode(e.target.value.toUpperCase())}
                   placeholder="NEW-CODE"
-                  className="field mt-4 font-mono uppercase"
+                  className="field-square mt-4 font-mono uppercase"
                 />
                 <label className="mt-3 flex items-start gap-2 text-sm text-gray-500">
                   <input type="checkbox" checked={confirmCode} onChange={e => setConfirmCode(e.target.checked)} className="mt-0.5" />
