@@ -212,7 +212,7 @@ export default function DashboardPage() {
               <div className={`flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border ${RULE} bg-white`}>
                 {community.logo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={community.logo_url} alt="" className="h-full w-full object-contain p-1" />
+                  <img src={community.logo_url} alt="" className="h-full w-full object-contain" />
                 ) : (
                   <span className="font-mono text-xl font-bold text-gray-300">{community.name[0]?.toUpperCase()}</span>
                 )}
