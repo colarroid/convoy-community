@@ -4,24 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-
-// Dial codes for the phone field. Nigeria first, it is the primary market.
-const DIAL_CODES = [
-  { code: 'NG', flag: '🇳🇬', dial: '+234' },
-  { code: 'GH', flag: '🇬🇭', dial: '+233' },
-  { code: 'KE', flag: '🇰🇪', dial: '+254' },
-  { code: 'ZA', flag: '🇿🇦', dial: '+27' },
-  { code: 'CA', flag: '🇨🇦', dial: '+1' },
-  { code: 'US', flag: '🇺🇸', dial: '+1' },
-  { code: 'GB', flag: '🇬🇧', dial: '+44' },
-]
+import { COUNTRY_CODES } from '@/lib/countries'
 
 export default function SignupPage() {
   const router = useRouter()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
-  const [dialCountry, setDialCountry] = useState('NG')
+  const [dialCountry, setDialCountry] = useState(COUNTRY_CODES[0].code)
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -36,7 +26,7 @@ export default function SignupPage() {
     setError('')
     // Store the full number with its dial code, dropping any leading 0 so the
     // national number reads cleanly after the code (e.g. +234 803...).
-    const dial = DIAL_CODES.find(d => d.code === dialCountry)?.dial ?? ''
+    const dial = COUNTRY_CODES.find(d => d.code === dialCountry)?.dial ?? ''
     const national = phone.trim().replace(/^0+/, '')
     const fullPhone = [dial, national].filter(Boolean).join(' ')
     const { error } = await supabase.auth.signUp({
@@ -138,7 +128,7 @@ export default function SignupPage() {
               aria-label="Country code"
               className="field w-28 shrink-0"
             >
-              {DIAL_CODES.map(d => (
+              {COUNTRY_CODES.map(d => (
                 <option key={d.code} value={d.code}>{d.flag} {d.dial}</option>
               ))}
             </select>

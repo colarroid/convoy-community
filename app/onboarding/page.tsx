@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { createCommunity, getMyCommunity, isCodeAvailable } from '@/lib/community'
 import { suggestCodes } from '@/lib/codeSuggest'
+import { COUNTRY_CODES } from '@/lib/countries'
 import AddressAutocomplete from '@/components/AddressAutocomplete'
 
 const CODE_RE = /^[A-Z0-9][A-Z0-9-]{2,14}[A-Z0-9]$/
@@ -16,7 +17,7 @@ export default function OnboardingPage() {
   const [code, setCode] = useState('')
   const [address, setAddress] = useState('')
   const [area, setArea] = useState('')
-  const [country, setCountry] = useState('ng')
+  const [country, setCountry] = useState(COUNTRY_CODES[0].code.toLowerCase())
   const [available, setAvailable] = useState<boolean | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -148,8 +149,9 @@ export default function OnboardingPage() {
             <div className="w-36">
               <label className="block text-sm font-medium mb-1.5">Country</label>
               <select value={country} onChange={e => setCountry(e.target.value)} className="field-square">
-                <option value="ng">Nigeria</option>
-                <option value="ca">Canada</option>
+                {COUNTRY_CODES.map(c => (
+                  <option key={c.code} value={c.code.toLowerCase()}>{c.name}</option>
+                ))}
               </select>
             </div>
           </div>
