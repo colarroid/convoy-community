@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
   const [sent, setSent] = useState(false)
@@ -25,7 +26,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { first_name: firstName.trim(), last_name: lastName.trim() },
+        data: { first_name: firstName.trim(), last_name: lastName.trim(), phone: phone.trim() },
       },
     })
     setBusy(false)
@@ -113,6 +114,7 @@ export default function SignupPage() {
             <input placeholder="Last name" value={lastName} onChange={e => setLastName(e.target.value)} required className="field" />
           </div>
           <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" className="field" />
+          <input type="tel" placeholder="Phone number" value={phone} onChange={e => setPhone(e.target.value)} required autoComplete="tel" className="field" />
           <input type="password" placeholder="Password (8+ characters)" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} autoComplete="new-password" className="field" />
           {error && <p className="text-sm text-red-500">{error}</p>}
           <button disabled={busy} className="btn-primary mt-1">{busy ? 'Creating account…' : 'Continue'}</button>

@@ -40,7 +40,7 @@ function MicroLabel({ children, className = 'text-gray-400' }: { children: React
 }
 
 /** Squared mono action, the reference has no rounded corners. */
-const BTN = 'font-mono text-[11px] font-semibold uppercase tracking-[0.10em] px-4 py-2.5 transition-colors'
+const BTN = 'inline-flex items-center justify-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.10em] px-[0.95rem] py-[0.5rem] transition-colors'
 const BTN_DARK = `${BTN} bg-gray-900 text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed`
 const BTN_GHOST = `${BTN} border ${RULE} text-gray-900 hover:bg-gray-50`
 
@@ -48,7 +48,7 @@ function BandCell({ label, value, accent, last }: {
   label: string; value: string | number; accent?: boolean; last?: boolean
 }) {
   return (
-    <div className={`border-b ${RULE} p-7 lg:border-b-0 ${last ? '' : 'lg:border-r'}`}>
+    <div className={`bracket-hover border-b ${RULE} p-7 lg:border-b-0 ${last ? '' : 'lg:border-r'}`}>
       <MicroLabel>{label}</MicroLabel>
       <p className={`mt-3 font-mono text-4xl font-bold tracking-tight ${accent ? 'text-red-600' : 'text-gray-900'}`}>
         {value}
@@ -200,10 +200,7 @@ export default function DashboardPage() {
         {/* ── Community ── */}
         <SectionStrip title="Community"
           right={
-            <button
-              onClick={() => { setEditing(e => !e); setActionError('') }}
-              className="font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400 transition-colors hover:text-gray-900"
-            >
+            <button onClick={() => { setEditing(e => !e); setActionError('') }} className={BTN_GHOST}>
               {editing ? 'Close' : 'Edit details'}
             </button>
           }
@@ -212,10 +209,10 @@ export default function DashboardPage() {
           {/* Identity */}
           <div className={`border-b ${RULE} p-7 lg:border-b-0 lg:border-r`}>
             <div className="flex items-center gap-5">
-              <div className={`flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border ${RULE} bg-gray-50`}>
+              <div className={`flex h-16 w-28 shrink-0 items-center justify-center overflow-hidden border ${RULE} bg-white`}>
                 {community.logo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={community.logo_url} alt="" className="h-full w-full object-cover" />
+                  <img src={community.logo_url} alt="" className="h-full w-full object-contain p-1" />
                 ) : (
                   <span className="font-mono text-xl font-bold text-gray-300">{community.name[0]?.toUpperCase()}</span>
                 )}
@@ -232,20 +229,19 @@ export default function DashboardPage() {
               <div className={`mt-7 border-t ${RULE} pt-6`}>
                 <div className="flex items-center gap-4">
                   <button type="button" onClick={() => fileRef.current?.click()} disabled={logoBusy} className={BTN_GHOST}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/upload.svg" alt="" className="h-3.5 w-3.5" />
                     {logoBusy ? 'Uploading…' : community.logo_url ? 'Change logo' : 'Upload logo'}
                   </button>
-                  <p className="text-xs text-gray-400">Square image recommended.</p>
+                  <p className="text-xs text-gray-400">Any shape, shown in full.</p>
                   <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onLogoFile} />
                 </div>
                 {logoError && <p className="mt-2 text-xs text-red-500">{logoError}</p>}
 
                 <div className="mt-5 flex flex-col gap-3">
-                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Community name"
-                    className={`h-11 border ${RULE} bg-white px-3.5 text-sm focus:border-gray-900 focus:outline-none`} />
-                  <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Community address"
-                    className={`h-11 border ${RULE} bg-white px-3.5 text-sm focus:border-gray-900 focus:outline-none`} />
-                  <input value={area} onChange={e => setArea(e.target.value)} placeholder="Area"
-                    className={`h-11 border ${RULE} bg-white px-3.5 text-sm focus:border-gray-900 focus:outline-none`} />
+                  <input value={name} onChange={e => setName(e.target.value)} placeholder="Community name" className="field" />
+                  <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Community address" className="field" />
+                  <input value={area} onChange={e => setArea(e.target.value)} placeholder="Area" className="field" />
                   {community.status === 'rejected' && (
                     <p className="text-xs text-gray-400">Saving resubmits your community for review.</p>
                   )}
@@ -264,7 +260,7 @@ export default function DashboardPage() {
               <MicroLabel>Community code</MicroLabel>
               <button
                 onClick={() => { setChangingCode(c => !c); setActionError(''); setConfirmCode(false) }}
-                className="font-mono text-[10px] font-semibold uppercase tracking-[0.10em] text-gray-400 transition-colors hover:text-gray-900"
+                className={BTN_GHOST}
               >
                 {changingCode ? 'Cancel' : 'Change'}
               </button>
@@ -274,6 +270,8 @@ export default function DashboardPage() {
               Share this with your members. It&apos;s their access to the community, and the destination its rides are heading to.
             </p>
             <button onClick={copyCode} className={`${BTN_DARK} mt-5`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/copy.svg" alt="" className="h-3.5 w-3.5 invert" />
               {copied ? 'Copied ✓' : 'Copy code'}
             </button>
 
@@ -288,7 +286,7 @@ export default function DashboardPage() {
                   value={newCode}
                   onChange={e => setNewCode(e.target.value.toUpperCase())}
                   placeholder="NEW-CODE"
-                  className={`mt-4 h-11 w-full border ${RULE} bg-white px-3.5 font-mono text-sm uppercase focus:border-gray-900 focus:outline-none`}
+                  className="field mt-4 font-mono uppercase"
                 />
                 <label className="mt-3 flex items-start gap-2 text-sm text-gray-500">
                   <input type="checkbox" checked={confirmCode} onChange={e => setConfirmCode(e.target.checked)} className="mt-0.5" />
