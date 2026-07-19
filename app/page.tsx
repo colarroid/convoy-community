@@ -385,9 +385,9 @@ export default function DashboardPage() {
         )}
 
         {/* ── Footer ── */}
-        <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 px-7 py-5">
-          <p className="text-sm text-gray-400">© {new Date().getFullYear()} VZA Technologies Limited</p>
-          <div className="flex items-center gap-2 text-sm text-gray-400">
+        <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 px-7 py-4">
+          <p className="text-xs text-gray-400">© {new Date().getFullYear()} VZA Technologies Limited</p>
+          <div className="flex items-center gap-2 text-xs text-gray-400">
             <a href="https://veesaa.co/privacy" className="transition-colors hover:text-gray-900">Privacy Policy</a>
             <span>·</span>
             <a href="https://veesaa.co/terms-of-use" className="transition-colors hover:text-gray-900">Terms of Use</a>
