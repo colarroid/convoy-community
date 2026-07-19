@@ -5,11 +5,23 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
+// Dial codes for the phone field. Nigeria first, it is the primary market.
+const DIAL_CODES = [
+  { code: 'NG', flag: '🇳🇬', dial: '+234' },
+  { code: 'GH', flag: '🇬🇭', dial: '+233' },
+  { code: 'KE', flag: '🇰🇪', dial: '+254' },
+  { code: 'ZA', flag: '🇿🇦', dial: '+27' },
+  { code: 'CA', flag: '🇨🇦', dial: '+1' },
+  { code: 'US', flag: '🇺🇸', dial: '+1' },
+  { code: 'GB', flag: '🇬🇧', dial: '+44' },
+]
+
 export default function SignupPage() {
   const router = useRouter()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [dialCountry, setDialCountry] = useState('NG')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -22,11 +34,16 @@ export default function SignupPage() {
     e.preventDefault()
     setBusy(true)
     setError('')
+    // Store the full number with its dial code, dropping any leading 0 so the
+    // national number reads cleanly after the code (e.g. +234 803...).
+    const dial = DIAL_CODES.find(d => d.code === dialCountry)?.dial ?? ''
+    const national = phone.trim().replace(/^0+/, '')
+    const fullPhone = [dial, national].filter(Boolean).join(' ')
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { first_name: firstName.trim(), last_name: lastName.trim(), phone: phone.trim() },
+        data: { first_name: firstName.trim(), last_name: lastName.trim(), phone: fullPhone },
       },
     })
     setBusy(false)
@@ -114,7 +131,19 @@ export default function SignupPage() {
             <input placeholder="Last name" value={lastName} onChange={e => setLastName(e.target.value)} required className="field" />
           </div>
           <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" className="field" />
-          <input type="tel" placeholder="Phone number" value={phone} onChange={e => setPhone(e.target.value)} required autoComplete="tel" className="field" />
+          <div className="flex gap-3">
+            <select
+              value={dialCountry}
+              onChange={e => setDialCountry(e.target.value)}
+              aria-label="Country code"
+              className="field w-28 shrink-0"
+            >
+              {DIAL_CODES.map(d => (
+                <option key={d.code} value={d.code}>{d.flag} {d.dial}</option>
+              ))}
+            </select>
+            <input type="tel" placeholder="Phone number" value={phone} onChange={e => setPhone(e.target.value)} required autoComplete="tel" className="field flex-1" />
+          </div>
           <input type="password" placeholder="Password (8+ characters)" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} autoComplete="new-password" className="field" />
           {error && <p className="text-sm text-red-500">{error}</p>}
           <button disabled={busy} className="btn-primary mt-1">{busy ? 'Creating account…' : 'Continue'}</button>
