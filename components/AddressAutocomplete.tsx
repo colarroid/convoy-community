@@ -7,8 +7,8 @@ import { loadGoogleMaps } from '@/lib/googleMaps'
 
 interface AddressAutocompleteProps {
   value: string
-  /** locality is the neighbourhood/suburb from Places; used to prefill the area field. */
-  onChange: (text: string, locality?: string) => void
+  /** area is a consistent "neighbourhood, city" string from Places; used to prefill the area field. */
+  onChange: (text: string, area?: string) => void
   placeholder?: string
   /** ISO country code to bias suggestions to (e.g. 'ng'). */
   country?: string
@@ -78,10 +78,12 @@ export default function AddressAutocomplete({ value, onChange, placeholder, coun
         if (status === 'OK' && place) {
           const comps: any[] = place.address_components ?? []
           const byType = (t: string) => comps.find(c => c.types?.includes(t))?.long_name as string | undefined
-          const locality =
-            byType('sublocality_level_1') ?? byType('sublocality') ??
-            byType('neighborhood') ?? byType('locality')
-          onChange(place.formatted_address ?? p.main, locality)
+          // Build a consistent "neighbourhood, city" so every community reads the
+          // same way (e.g. "Sabo Yaba, Lagos"), not just the bare neighbourhood.
+          const neighbourhood = byType('sublocality_level_1') ?? byType('sublocality') ?? byType('neighborhood')
+          const city = byType('locality') ?? byType('postal_town') ?? byType('administrative_area_level_2')
+          const area = [neighbourhood, city].filter(Boolean).join(', ') || undefined
+          onChange(place.formatted_address ?? p.main, area)
         } else {
           onChange(p.secondary ? `${p.main}, ${p.secondary}` : p.main)
         }

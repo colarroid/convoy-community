@@ -33,28 +33,3 @@ html, body {
     @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold;
   }
 }
-
-/* Corner-bracket focus reticle on hover, for stat cells. */
-.bracket-hover { position: relative; }
-.bracket-hover::after {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-  --c: #2563EB;
-  --s: 12px;
-  --t: 1.5px;
-  background:
-    linear-gradient(var(--c), var(--c)) 0 0 / var(--s) var(--t),
-    linear-gradient(var(--c), var(--c)) 0 0 / var(--t) var(--s),
-    linear-gradient(var(--c), var(--c)) 100% 0 / var(--s) var(--t),
-    linear-gradient(var(--c), var(--c)) 100% 0 / var(--t) var(--s),
-    linear-gradient(var(--c), var(--c)) 0 100% / var(--s) var(--t),
-    linear-gradient(var(--c), var(--c)) 0 100% / var(--t) var(--s),
-    linear-gradient(var(--c), var(--c)) 100% 100% / var(--s) var(--t),
-    linear-gradient(var(--c), var(--c)) 100% 100% / var(--t) var(--s);
-  background-repeat: no-repeat;
-}
-.bracket-hover:hover::after { opacity: 1; }

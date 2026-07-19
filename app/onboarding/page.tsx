@@ -131,10 +131,10 @@ export default function OnboardingPage() {
               value={address}
               country={country}
               placeholder="e.g. Landmark Event Center"
-              onChange={(text, locality) => {
+              onChange={(text, place) => {
                 setAddress(text)
                 // Prefill the area from the picked place unless the owner typed one.
-                if (locality) setArea(prev => prev.trim() ? prev : locality)
+                if (place) setArea(prev => prev.trim() ? prev : place)
               }}
             />
           </div>

@@ -48,7 +48,7 @@ function BandCell({ label, value, accent, last }: {
   label: string; value: string | number; accent?: boolean; last?: boolean
 }) {
   return (
-    <div className={`bracket-hover border-b ${RULE} p-7 lg:border-b-0 ${last ? '' : 'lg:border-r'}`}>
+    <div className={`border-b ${RULE} p-7 lg:border-b-0 ${last ? '' : 'lg:border-r'}`}>
       <MicroLabel>{label}</MicroLabel>
       <p className={`mt-3 font-mono text-4xl font-bold tracking-tight ${accent ? 'text-red-600' : 'text-gray-900'}`}>
         {value}
